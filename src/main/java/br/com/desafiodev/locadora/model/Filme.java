@@ -1,86 +1,52 @@
 package br.com.desafiodev.locadora.model;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import jakarta.validation.constraints.NotBlank;
+import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 
 @Entity
 @Table(name = "filmes")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Filme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
     private boolean ativo;
+
+    @NotNull
+    @Min(1)
+    @Max(10)
     private Long exemplaresDisponiveis;
 
-    // Ajustar para pegar dados da API
+    @NotBlank(message = "O título é obrigatório")
     private String titulo;
+
+    @Column(columnDefinition = "TEXT")
     private String resumo;
+
+    @NotBlank(message = "A pontuação é obrigatória")
     private String pontuacao;
 
-
-    @Temporal(TemporalType.DATE)
-    private Date lancamento;
-
-
-    // Getters e setters
+    // Como String, pois vem da API como string
+    @NotBlank(message = "A data de lançamento é obrigatória")
+    private String lancamento;
 
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
-
-    public Long getExemplaresDisponiveis() {
-        return exemplaresDisponiveis;
-    }
-
-    public void setExemplaresDisponiveis(Long exemplaresDisponiveis) {
-        this.exemplaresDisponiveis = exemplaresDisponiveis;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getResumo() {
-        return resumo;
-    }
-
-    public void setResumo(String resumo) {
-        this.resumo = resumo;
-    }
-
-    public String getPontuacao() {
-        return pontuacao;
-    }
-
-    public void setPontuacao(String pontuacao) {
-        this.pontuacao = pontuacao;
-    }
-
-    public Date getLancamento() {
-        return lancamento;
-    }
-
-    public void setLancamento(Date lancamento) {
-        this.lancamento = lancamento;
+    // Para poder converter para LocalDate
+    public LocalDate getLancamentoLocalDate() {
+        return lancamento != null && !lancamento.isEmpty() ? LocalDate.parse(lancamento) : null;
     }
 }
