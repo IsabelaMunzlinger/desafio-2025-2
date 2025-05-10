@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.antlr.v4.runtime.misc.NotNull;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -22,14 +24,18 @@ public class Filme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private boolean ativo;
 
     @NotNull
-    @Min(1)
     @Max(10)
-    private Long exemplaresDisponiveis;
+    private Long exemplaresDisponiveis = 1L;
+
+
+    @OneToMany(mappedBy = "filme", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Exemplar> exemplares = new ArrayList<>();
+
 
     @NotBlank(message = "O título é obrigatório")
     private String titulo;
@@ -44,6 +50,10 @@ public class Filme {
     @NotBlank(message = "A data de lançamento é obrigatória")
     private String lancamento;
 
+//    public void adicionarExemplar(Exemplar exemplar) {
+//        exemplar.setFilme(this);
+//        exemplares.add(exemplar);
+//    }
 
     // Para poder converter para LocalDate
     public LocalDate getLancamentoLocalDate() {
