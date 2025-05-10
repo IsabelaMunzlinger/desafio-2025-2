@@ -19,7 +19,7 @@ public class TmdbService {
 
     private static final Logger logger = LoggerFactory.getLogger(TmdbService.class);
 
-    // Injeta o valor do  - valor em .env
+    // Injeta o valor do  token - valor em .env
     @Value("${api.token.v4}")
     private String apiTokenV4;
     private final String urlDiscoverMovie = "https://api.themoviedb.org/3/discover/movie?language=pt-BR";
@@ -52,7 +52,7 @@ public class TmdbService {
     }
 
 
-    // Método comum para processar os filmes
+    // Para processar os filmes
     private Filme processarFilme(JsonNode results) {
         int totalFilmes = results.size();
         if (totalFilmes == 0) {
