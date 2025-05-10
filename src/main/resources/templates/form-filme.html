@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Filme</title>
+</head>
+<body>
+
+<h2>Adicionar Novo Filme</h2>
+
+<!-- Mensagem de erro -->
+<div th:if="${erro}" style="color: red; margin-top: 1em;">
+    <strong th:text="${erro}"></strong>
+</div>
+
+<!-- Botão para buscar um filme aleatório -->
+<form th:action="@{/filmes/buscar}" method="get">
+    <button type="submit">Buscar Filme Aleatório</button>
+</form>
+
+<!-- Formulário para salvar o filme -->
+<form th:action="@{/filmes/salvar}" th:object="${filme}" method="post">
+    <!-- Campo oculto para o ID -->
+    <input type="hidden" th:field="*{id}" />
+
+    <p>
+        <label for="titulo">Título:</label>
+        <!-- readonly para não poder alterar o campo -->
+        <input type="text" id="titulo" th:field="*{titulo}" readonly/>
+    </p>
+
+    <p>
+        <label for="resumo">Resumo:</label>
+        <textarea id="resumo" th:field="*{resumo}" readonly></textarea>
+    </p>
+
+    <p>
+        <label for="pontuacao">Pontuação:</label>
+        <input type="text" id="pontuacao" th:field="*{pontuacao}" readonly />
+    </p>
+
+    <p>
+        <label for="lancamento">Lançamento:</label>
+        <input type="date" id="lancamento" th:field="*{lancamento}" readonly />
+
+    </p>
+
+    <p>
+        <label for="ativo">Ativo:</label>
+        <input type="checkbox" id="ativo" th:field="*{ativo}" />
+    </p>
+
+    <p>
+        <!-- Limita que seja selecionado menos que 1 ou mais que 10 -->
+        <label for="exemplaresDisponiveis">Exemplares disponíveis:</label>
+        <input type="number" id="exemplaresDisponiveis"
+               th:field="*{exemplaresDisponiveis}"
+               required min="1" max="10" />
+    </p>
+
+    <button type="submit">Salvar</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Exemplares</title>
+</head>
+<body>
+
+<h2>Adicionar Exemplares para o Filme</h2>
+
+<!-- Mensagem de erro -->
+<div th:if="${erro}" style="color: red; margin-top: 1em;">
+    <strong th:text="${erro}"></strong>
+</div>
+
+<!-- Formulário para cadastrar exemplares -->
+<form th:action="@{/exemplares/salvar}" method="post">
+    <p>
+        <label for="filmeId">Filme:</label>
+        <select id="filmeId" name="filmeId" required>
+            <option th:each="filme : ${filmes}" th:value="${filme.id}" th:text="${filme.titulo}"></option>
+        </select>
+    </p>
+
+    <p>
+        <label for="quantidade">Quantidade de Exemplares:</label>
+        <input type="number" id="quantidade" name="quantidade" required min="1" />
+    </p>
+
+    <p>
+        <label for="ativo">Ativo:</label>
+        <input type="checkbox" id="ativo" name="ativo" />
+    </p>
+
+    <button type="submit">Cadastrar Exemplares</button>
+</form>
+
+</body>
+</html>
