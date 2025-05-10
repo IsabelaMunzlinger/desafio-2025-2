@@ -1,6 +1,7 @@
 package br.com.desafiodev.locadora.controller;
 
 
+import br.com.desafiodev.locadora.dto.FilmeDTO;
 import br.com.desafiodev.locadora.model.Filme;
 import br.com.desafiodev.locadora.service.FilmeService;
 import br.com.desafiodev.locadora.service.TmdbService;
@@ -38,19 +39,20 @@ public class FilmeController {
 
     // Retorna que o filme foi salvo
     @PostMapping("/salvar")
-    public String salvarFilme(@ModelAttribute Filme filme, Model model, BindingResult result) {
+    public String salvarFilme(@ModelAttribute FilmeDTO filmeDTO, Model model, BindingResult result) {
         if (result.hasErrors()) {
             return "form-filme";
         }
         try {
-            filmeService.salvarFilme(filme);
+            filmeService.salvarFilme(filmeDTO);
             return "redirect:/filmes/form?salvo=true";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("filme", filme); // mantém os dados preenchidos
-            model.addAttribute("erro", e.getMessage()); // passa mensagem de erro
+            model.addAttribute("filme", filmeDTO); // mantém os dados preenchidos
+            model.addAttribute("erro", e.getMessage());// passa mensagem de erro
             return "form-filme"; // volta para o formulário com erro
         }
     }
+
 }
 
 
