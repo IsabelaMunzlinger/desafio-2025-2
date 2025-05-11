@@ -1,22 +1,31 @@
 package br.com.desafiodev.locadora.service;
 
 import br.com.desafiodev.locadora.dto.FilmeDTO;
-import br.com.desafiodev.locadora.model.Exemplar;
 import br.com.desafiodev.locadora.model.Filme;
 import br.com.desafiodev.locadora.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
 
 @Service
 public class FilmeService {
 
     @Autowired
+    private ExemplarService exemplarService;
+
+    @Autowired
     private FilmeRepository filmeRepository;
+
+    private FilmeDTO dto;
 
     @Transactional
     public void salvarFilme(FilmeDTO dto) {
+        // Verifica se já existe um filme com o mesmo título
+        boolean filmeExistente = filmeRepository.verificaTituloIgnora(dto.titulo());
+        if (filmeExistente) {
+            throw new IllegalArgumentException("Já existe um filme com esse título.");
+        }
+
         Filme filme = dto.id() != null ?
                 filmeRepository.findById(dto.id())
                         .orElseThrow(() -> new IllegalArgumentException("Filme não encontrado")) :
@@ -28,33 +37,15 @@ public class FilmeService {
         filme.setPontuacao(dto.pontuacao());
         filme.setLancamento(dto.lancamento().toString());
         filme.setAtivo(dto.ativo());
-        filme.setExemplaresDisponiveis(1L); // Inicializa com 1
+        filme.setExemplaresDisponiveis(0L); // Inicializa com 0 exemplares disponíveis
 
-        // Salva o filme primeiro
+        // Salva o filme
         filme = filmeRepository.save(filme);
 
-        // Adiciona exemplares diretamente (sem chamar outro serviço)
+        // Adiciona exemplares (se houver)
         int quantidade = dto.exemplaresDisponiveis() != null ? dto.exemplaresDisponiveis().intValue() : 0;
         if (quantidade > 0) {
-            adicionarExemplares(filme, quantidade, dto.ativo());
+            exemplarService.adicionarExemplares(filme.getId(), quantidade, dto.ativo());
         }
-    }
-
-    private void adicionarExemplares(Filme filme, int quantidade, Boolean ativo) {
-        if (quantidade <= 0) return;
-
-        for (int i = 0; i < quantidade; i++) {
-            Exemplar exemplar = new Exemplar();
-            exemplar.setAtivo(ativo != null ? ativo : true);
-            exemplar.setDataCadastro(new Date());
-
-            exemplar.setFilme(filme);
-            filme.getExemplares().add(exemplar);
-        }
-
-        filme.setExemplaresDisponiveis(filme.getExemplaresDisponiveis() + quantidade);
-
-        // Salvar o filme salva automaticamente os exemplares
-        filmeRepository.save(filme);
     }
 }
