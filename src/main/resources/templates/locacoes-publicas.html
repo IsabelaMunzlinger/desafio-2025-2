@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta Pública de Locações</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body class="container mt-4">
+
+<!-- Botão para voltar ao menu -->
+<a th:href="@{/menu}" class="btn btn-secondary mb-4">
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<!-- Título com o CPF consultado dinamicamente -->
+<h2>Locações Pendentes para CPF: <span th:text="${cpf}"></span></h2>
+
+<!-- Caso não existam locações, exibe alerta -->
+<div th:if="${#lists.isEmpty(locacoes)}">
+    <div class="alert alert-warning" role="alert">
+        Nenhuma locação pendente encontrada para este CPF.
+    </div>
+</div>
+
+<!-- Caso existam locações, exibe a tabela -->
+<div th:if="${not #lists.isEmpty(locacoes)}">
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <!-- Cabeçalhos da tabela -->
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Data Locação</th>
+            <th>Data Devolução</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Percorre a lista de locações e exibe os dados -->
+        <tr th:each="locacao : ${locacoes}">
+            <td th:text="${locacao.nome}">Nome</td>
+            <td th:text="${locacao.email}">Email</td>
+            <td th:text="${locacao.telefone}">Telefone</td>
+            <td th:text="${locacao.dataLocacaoFormatada}">Data Locação</td>
+            <td th:text="${locacao.dataDevolucaoFormatada}">Data Devolução</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
