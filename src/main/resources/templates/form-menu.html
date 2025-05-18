@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" /> <!-- Define a codificação de caracteres como UTF-8 -->
+    <title>Locadora</title> <!-- Título da aba do navegador -->
+
+    <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+</head>
+
+<body>
+<!-- Navbar de navegação principal -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Link do nome da marca que leva para a página inicial -->
+    <a class="navbar-brand" th:href="@{/}">Locadora</a>
+
+    <!-- Botão para abrir/fechar o menu em telas pequenas -->
+    <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+    >
+        <span class="navbar-toggler-icon"></span> <!-- Ícone padrão do botão -->
+    </button>
+
+    <!-- Conteúdo da barra de navegação que colapsa em telas menores -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mr-auto"> <!-- Lista dos itens de navegação -->
+
+            <!-- Menu suspenso para filmes -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="filmesDropdown" role="button" data-toggle="dropdown">
+                    Filmes
+                </a>
+                <div class="dropdown-menu">
+                    <!-- Link para adicionar novo filme -->
+                    <a class="dropdown-item" th:href="@{/filmes/form}">Adicionar Filme</a>
+                    <!-- Link para listar/editar filmes existentes -->
+                    <a class="dropdown-item" th:href="@{/filmes/listar}">Editar Filme</a>
+                </div>
+            </li>
+
+            <!-- Menu suspenso para exemplares -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="exemplaresDropdown" role="button" data-toggle="dropdown">
+                    Exemplares
+                </a>
+                <div class="dropdown-menu">
+                    <!-- Link para cadastrar novo exemplar -->
+                    <a class="dropdown-item" th:href="@{/exemplares/novo}">Cadastrar Exemplar</a>
+                    <!-- Link para listar/editar exemplares existentes -->
+                    <a class="dropdown-item" th:href="@{/exemplares/listar}">Editar Exemplar</a>
+                </div>
+            </li>
+
+            <!-- Menu suspenso para locações -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="locacoesDropdown" role="button" data-toggle="dropdown">
+                    Locações
+                </a>
+                <div class="dropdown-menu">
+                    <!-- Link para iniciar nova locação -->
+                    <a class="dropdown-item" th:href="@{/locacoes/novo}">Nova Locação</a>
+                    <!-- Link para listar locações existentes -->
+                    <a class="dropdown-item" th:href="@{/locacoes/listar}">Listar Locações</a>
+                </div>
+            </li>
+
+            <!-- Link direto para a página de consulta pública -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/publico/form}">Consulta Pública</a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+<!-- Conteúdo principal da página -->
+<div class="container mt-4">
+    <h1>Bem-vindo ao sistema da Locadora</h1>
+    <p>Use o menu acima para navegar entre as páginas.</p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
