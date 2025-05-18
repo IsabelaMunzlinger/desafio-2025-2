@@ -1,39 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Adicionar Exemplares</title>
+    <meta charset="UTF-8" />
+    <title th:text="${exemplar != null and exemplar.id != null} ? 'Editar Exemplar' : 'Adicionar Exemplares'">Formulário</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> <!-- Bootstrap CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script> <!-- Plugin jQuery Mask -->
 </head>
-<body>
+<body class="container mt-4">
 
-<h2>Adicionar Exemplares para o Filme</h2>
+<a th:href="@{/menu}" class="btn btn-secondary mb-4"> <!-- Botão para voltar ao menu principal -->
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2 th:text="${exemplar != null and exemplar.id != null} ? 'Editar Exemplar' : 'Adicionar Exemplares para o Filme'">Título</h2> <!-- Cabeçalho dinâmico -->
 
 <!-- Mensagem de erro -->
-<div th:if="${erro}" style="color: red; margin-top: 1em;">
+<div th:if="${erro}" class="alert alert-danger" role="alert">
     <strong th:text="${erro}"></strong>
 </div>
 
-<!-- Formulário para cadastrar exemplares -->
-<form th:action="@{/exemplares/salvar}" method="post">
-    <p>
+<form th:action="@{${exemplar != null and exemplar.id != null} ? '/exemplares/atualizar/' + ${exemplar.id} : '/exemplares/salvar'}" method="post"> <!-- Form para salvar ou atualizar -->
+
+    <!-- Cadastro: select para escolher filme (aparece só se não estiver editando) -->
+    <div class="form-group" th:if="${exemplar == null or exemplar.id == null}">
         <label for="filmeId">Filme:</label>
-        <select id="filmeId" name="filmeId" required>
-            <option th:each="filme : ${filmes}" th:value="${filme.id}" th:text="${filme.titulo}"></option>
+        <select id="filmeId" name="filmeId" class="form-control" required>
+            <option th:each="filme : ${filmes}"
+                    th:value="${filme.id}"
+                    th:text="${filme.titulo}">
+            </option>
         </select>
-    </p>
+    </div>
 
-    <p>
+    <!-- Edição: mostra apenas o título do filme (quando editando) -->
+    <div th:if="${exemplar != null and exemplar.id != null}">
+        <label>Filme:</label>
+        <p><strong th:text="${exemplar.filme.titulo}">Título do filme</strong></p>
+    </div>
+
+    <!-- Quantidade de exemplares (apenas no cadastro) -->
+    <div class="form-group" th:if="${exemplar == null or exemplar.id == null}">
         <label for="quantidade">Quantidade de Exemplares:</label>
-        <input type="number" id="quantidade" name="quantidade" required min="1" />
-    </p>
+        <input type="number" id="quantidade" name="quantidade" class="form-control" required min="1" />
+    </div>
 
-    <p>
-        <label for="ativo">Ativo:</label>
-        <input type="checkbox" id="ativo" name="ativo" />
-    </p>
+    <!-- Checkbox para marcar exemplar como ativo -->
+    <div class="form-group form-check">
+        <input type="checkbox" id="ativo" name="ativo" class="form-check-input"
+               th:checked="${exemplar != null and exemplar.ativo}"
+               th:disabled="${temLocacaoPendente}" />
+        <label class="form-check-label" for="ativo">Ativo</label>
+    </div>
 
-    <button type="submit">Cadastrar Exemplares</button>
+    <!-- Aviso se o exemplar está alugado e não pode ser inativado -->
+    <div th:if="${temLocacaoPendente}" class="alert alert-warning">
+        Este exemplar está alugado e não pode ser inativado.
+    </div>
+
+    <!-- Botão para enviar o formulário, com texto dinâmico -->
+    <button type="submit" class="btn btn-primary"
+            th:text="${exemplar != null and exemplar.id != null} ? 'Atualizar' : 'Cadastrar Exemplares'">
+        Botão
+    </button>
 </form>
+
+<script>
+    $(document).ready(function () {
+    });
+</script>
 
 </body>
 </html>
