@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nova Locação</title> <!-- Título da página -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> <!-- CSS do Bootstrap -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script> <!-- Plugin para máscaras de input -->
+</head>
+<body class="container mt-4">
+
+<!-- Botão para voltar ao menu -->
+<a th:href="@{/menu}" class="btn btn-secondary mb-4">
+  <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2>Nova Locação</h2>
+
+<!-- Formulário de locação -->
+<form th:action="@{/locacoes/salvar}" th:object="${locacao}" method="post">
+
+  <!-- Campo Nome -->
+  <div class="form-group">
+    <label for="nome">Nome:</label>
+    <input type="text" th:field="*{nome}" id="nome" class="form-control" required />
+    <div class="text-danger" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div> <!-- Erros de validação -->
+  </div>
+
+  <!-- Campo CPF -->
+  <div class="form-group">
+    <label for="cpf">CPF:</label>
+    <input type="text" th:field="*{cpf}" id="cpf" class="form-control" required />
+    <div class="text-danger" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></div>
+  </div>
+
+  <!-- Campo Email -->
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input type="email" th:field="*{email}" id="email" class="form-control" required />
+    <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+  </div>
+
+  <!-- Campo Telefone -->
+  <div class="form-group">
+    <label for="telefone">Telefone:</label>
+    <input type="text" th:field="*{telefone}" id="telefone" class="form-control" required />
+    <div class="text-danger" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}"></div>
+  </div>
+
+  <!-- Campo Data de Locação -->
+  <div class="form-group">
+    <label for="dataLocacao">Data da Locação:</label>
+    <input type="date" th:field="*{dataLocacao}" id="dataLocacao" class="form-control" required />
+  </div>
+
+  <!-- Campo Data de Devolução -->
+  <div class="form-group">
+    <label for="dataDevolucao">Data da Devolução:</label>
+    <input type="date" th:field="*{dataDevolucao}" id="dataDevolucao" class="form-control" required />
+  </div>
+
+  <!-- Campo para seleção dos exemplares -->
+  <div class="form-group">
+    <label for="exemplarIds">Escolha até 3 Exemplares:</label>
+    <select th:field="*{exemplarIds}" id="exemplarIds" class="form-control" multiple size="5" required>
+      <option th:each="exemplar : ${exemplaresDisponiveis}"
+              th:value="${exemplar.id}"
+              th:text="${'Filme: ' + exemplar.filme.titulo + ' (ID: ' + exemplar.id + ')'}">
+      </option>
+    </select>
+    <div class="text-danger" th:if="${#fields.hasErrors('exemplarIds')}" th:errors="*{exemplarIds}"></div>
+  </div>
+
+  <!-- Botão de envio -->
+  <button type="submit" class="btn btn-primary">Salvar Locação</button>
+</form>
+
+<script>
+  $(document).ready(function () {
+    $('#telefone').mask('(00) 00000-0000');
+    $('#cpf').mask('000.000.000-00');
+  });
+</script>
+
+</body>
+</html>
