@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Locação</title> <!-- Título fixo da página -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" /> <!-- Font Awesome -->
+</head>
+<body class="container mt-5 text-center">
+
+<a th:href="@{/menu}" class="btn btn-secondary mb-4"> <!-- Botão para voltar ao menu -->
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2 class="mb-4">QR Code da Locação</h2> <!-- Cabeçalho -->
+
+<div class="card mx-auto" style="width: 300px; padding: 20px;">
+    <img th:src="'data:image/png;base64,' + ${qrCodeBase64}" alt="QR Code" class="img-fluid" /> <!-- Imagem do QR Code em base64 -->
+</div>
+
+</body>
+</html>
