@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/exemplares")
@@ -78,12 +81,39 @@ public class ExemplarController {
         }
     }
 
-    // Lista todos os exemplares
+    // Lista os exemplares
     @GetMapping("/listar")
     public String listarExemplares(Model model) {
-        List<Exemplar> exemplares = exemplarService.listarTodos(); // Chama o service para buscar todos os exemplares
+        List<Exemplar> exemplares = exemplarService.listarTodos();
+
+        // Cria um map para indicar se cada exemplar pode ser excluído
+        Map<Long, Boolean> podeExcluirMap = new HashMap<>();
+        for (Exemplar ex : exemplares) {
+            // Verifica se o exemplar nunca foi alugado
+            boolean nuncaAlugado = ex.getLocacoesExemplares() == null || ex.getLocacoesExemplares().isEmpty();
+            // Verifica se o exemplar está ativo
+            boolean ativo = ex.isAtivo();
+            podeExcluirMap.put(ex.getId(), nuncaAlugado && ativo);
+        }
+
         model.addAttribute("exemplares", exemplares);
+        model.addAttribute("podeExcluirMap", podeExcluirMap);
         return "lista-exemplares";
     }
+
+
+    // Mapeia os exemplares para excluir
+    @GetMapping("/excluir/{id}")
+    public String excluirExemplar(@PathVariable Long id, RedirectAttributes redirectAttrs) {
+        try {
+            exemplarService.excluirExemplar(id); // você implementa esse método para validar e excluir
+            redirectAttrs.addFlashAttribute("sucesso", "Exemplar excluído com sucesso.");
+        } catch (IllegalArgumentException e) {
+            redirectAttrs.addFlashAttribute("erro", e.getMessage());
+        }
+        return "redirect:/exemplares/listar";
+    }
+
+
 
 }
