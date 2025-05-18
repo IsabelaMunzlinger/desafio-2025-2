@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Filmes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body class="container mt-4">
+
+<a th:href="@{/menu}" class="btn btn-secondary mb-4">
+    <!-- Botão que leva de volta ao menu principal -->
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2>Lista de Filmes</h2> <!-- Título da página -->
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <!-- Cabeçalhos da tabela: título do filme, pontuação, exemplares disponíveis, status e ações -->
+        <th>Título</th>
+        <th>Pontuação</th>
+        <th>Exemplares Disponíveis</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Loop para exibir cada filme da lista -->
+    <tr th:each="filme : ${filmes}">
+        <!-- Exibe o título do filme -->
+        <td th:text="${filme.titulo}"></td>
+
+        <!-- Exibe a pontuação do filme -->
+        <td th:text="${filme.pontuacao}"></td>
+
+        <!-- Exibe a quantidade de exemplares disponíveis -->
+        <td th:text="${filme.exemplaresDisponiveis}"></td>
+
+        <!-- Exibe o status do filme como 'Ativo' ou 'Inativo' -->
+        <td th:text="${filme.ativo} ? 'Ativo' : 'Inativo'"></td>
+
+        <!-- Botão para editar o filme -->
+        <td>
+            <a th:href="@{'/filmes/editar/' + ${filme.id}}" class="btn btn-sm btn-primary">Editar</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Botão para adicionar um novo filme -->
+<a th:href="@{/filmes/form}" class="btn btn-success">Novo Filme</a>
+
+</body>
+</html>
