@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista de Exemplares</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+
+<body class="container mt-4">
+
+<!-- Botão para voltar ao menu principal -->
+<a th:href="@{/menu}" class="btn btn-secondary mb-4">
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2>Lista de Exemplares</h2>
+
+<!-- Tabela com bordas e listras -->
+<table class="table table-bordered table-striped">
+    <thead> <!-- Cabeçalho da tabela -->
+    <tr>
+        <th>ID</th> <!-- Coluna para o ID do exemplar -->
+        <th>Filme</th> <!-- Coluna com o título do filme relacionado -->
+        <th>Ativo</th> <!-- Coluna indicando se o exemplar está ativo -->
+        <th>Data de Cadastro</th> <!-- Coluna com a data de cadastro do exemplar -->
+        <th>Ações</th> <!-- Coluna com botões de ação (editar/excluir) -->
+    </tr>
+    </thead>
+
+    <tbody>
+    <!-- Loop que percorre a lista de exemplares -->
+    <tr th:each="exemplar : ${exemplares}">
+        <!-- Exibe o ID do exemplar -->
+        <td th:text="${exemplar.id}"></td>
+
+        <!-- Exibe o título do filme relacionado ao exemplar -->
+        <td th:text="${exemplar.filme.titulo}"></td>
+
+        <!-- Exibe "Sim" se o exemplar está ativo, ou "Não" caso contrário -->
+        <td th:text="${exemplar.ativo ? 'Sim' : 'Não'}"></td>
+
+        <!-- Formata e exibe a data de cadastro no formato dd/MM/yyyy -->
+        <td th:text="${#dates.format(exemplar.dataCadastro, 'dd/MM/yyyy')}"></td>
+
+        <!-- Coluna de ações (editar e excluir) -->
+        <td>
+            <!-- Botão para editar o exemplar -->
+            <a th:href="@{/exemplares/editar/{id}(id=${exemplar.id})}" class="btn btn-primary btn-sm mr-2">Editar</a>
+
+            <!-- Se o exemplar pode ser excluído (não está alugado), mostra o botão de excluir -->
+            <span th:if="${podeExcluirMap[exemplar.id]}">
+                <a th:href="@{/exemplares/excluir/{id}(id=${exemplar.id})}"
+                   onclick="return confirm('Confirma a exclusão deste exemplar?')" <!-- Confirmação antes de excluir -->
+                   class="btn btn-danger btn-sm">Excluir</a>
+            </span>
+
+            <!-- Caso o exemplar não possa ser excluído (já alugado), mostra mensagem em cinza -->
+            <span th:if="${!podeExcluirMap[exemplar.id]}" class="text-muted font-italic">
+                Exclusão bloqueada (já alugado)
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Botão para cadastrar um novo exemplar -->
+<a th:href="@{/exemplares/novo}" class="btn btn-success">Novo Exemplar</a>
+
+</body>
+</html>
