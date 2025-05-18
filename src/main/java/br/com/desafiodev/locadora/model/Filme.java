@@ -3,7 +3,6 @@ package br.com.desafiodev.locadora.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.antlr.v4.runtime.misc.NotNull;
-import jakarta.validation.constraints.Max;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +28,7 @@ public class Filme {
     private boolean ativo;
 
     @NotNull
-    @Max(10)
     private Long exemplaresDisponiveis = 1L;
-
 
     @OneToMany(mappedBy = "filme", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Exemplar> exemplares = new ArrayList<>();
@@ -49,11 +46,6 @@ public class Filme {
     // Como String, pois vem da API como string
     @NotBlank(message = "A data de lançamento é obrigatória")
     private String lancamento;
-
-//    public void adicionarExemplar(Exemplar exemplar) {
-//        exemplar.setFilme(this);
-//        exemplares.add(exemplar);
-//    }
 
     // Para poder converter para LocalDate
     public LocalDate getLancamentoLocalDate() {
