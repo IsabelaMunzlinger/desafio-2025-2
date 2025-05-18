@@ -13,10 +13,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 
 @Controller
+// Rota base para todas as requisições relacionadas a locações
 @RequestMapping("/locacoes")
 public class LocacaoController {
 
@@ -32,42 +32,78 @@ public class LocacaoController {
     @Autowired
     private LocacaoService locacaoService;
 
-    // Mostra a tela de cadastrado para uma nova locação
+    // Cria uma nova locação
     @GetMapping("/novo")
     public String novaLocacaoForm(Model model) {
         model.addAttribute("locacao", new Locacao());
-        //Filtrar apenas exemplares válidos: ativos e não alugados
+
+        // Busca apenas exemplares disponíveis para locação (ativos e não alugados)
         List<Exemplar> exemplaresDisponiveis = exemplarRepository.buscarExemplaresDisponiveisParaLocacao();
         model.addAttribute("exemplaresDisponiveis", exemplaresDisponiveis);
 
         return "form-locacao";
     }
 
-    // Salva a locação (ao submeter o formulário de criação de locação)
+    // Processa o envio do formulário de criação de locação
     @PostMapping("/salvar")
-    public String salvarLocacao(@Valid @ModelAttribute("locacao") br.com.desafiodev.locadora.dto.LocacaoDTO dto,
-                                BindingResult result,
-                                Model model) {
-        // Verifica se houve erros de validação no formulário
+    public String salvarLocacao(
+            @Valid @ModelAttribute("locacao") br.com.desafiodev.locadora.dto.LocacaoDTO dto,
+            BindingResult result,
+            Model model) {
+
+        // Se houver erros de validação no DTO, retorna ao formulário com os erros
         if (result.hasErrors()) {
-            // Se sim, recarrega os exemplares disponíveis e retorna o formulário novamente
             model.addAttribute("exemplaresDisponiveis", exemplarRepository.buscarExemplaresDisponiveisParaLocacao());
-            return "form-locacao"; // Volta para a tela do formulário com os erros exibidos
+            return "form-locacao";
         }
 
         try {
-            // Chama a service para salvar a locação
+            // Tenta salvar a locação usando a service
             locacaoService.salvarLocacao(dto);
 
-            // Se tudo der certo, redireciona para a listagem de locações
-            return "redirect:/locacoes";
+            // Redireciona para a lista de locações se tudo ocorrer bem
+            return "redirect:/locacoes/listar";
         } catch (IllegalArgumentException ex) {
+            // Em caso de erro de regra de negócio, adiciona mensagem de erro
             result.reject(null, ex.getMessage());
 
-            // Recarrega os exemplares disponíveis e retorna para o formulário com a mensagem de erro
+            // Recarrega exemplares e retorna ao formulário
             model.addAttribute("exemplaresDisponiveis", exemplarService.listarExemplaresDisponiveisParaLocacao());
             return "form-locacao";
         }
     }
 
+    // Realiza a devolução de uma locação com o ID informado
+    @PostMapping("/{id}/devolver")
+    public String devolverLocacao(@PathVariable Long id) {
+        locacaoService.devolverLocacao(id); // Marca a locação como devolvida
+        return "redirect:/locacoes/listar"; // Redireciona para a lista de locações
+    }
+
+    // Lista todas as locações, com filtros opcionais (nome, CPF, email, status)
+    @GetMapping("/listar")
+    public String listarLocacoes(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String cpf,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String status,
+            Model model) {
+
+        // Busca locações filtradas com base nos parâmetros fornecidos
+        List<Locacao> locacoes = locacaoService.buscarFiltradas(nome, cpf, status, email);
+        model.addAttribute("locacoes", locacoes);
+        return "lista-locacoes";
+    }
+
+    // Exibe o QR Code gerado para uma locação específica
+    @GetMapping("/{id}/qrcode")
+    public String exibirQrCode(@PathVariable Long id, Model model) {
+        // Busca a locação pelo ID ou lança exceção se não encontrada
+        Locacao locacao = locacaoService.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Locação não encontrada com ID: " + id));
+
+        // Adiciona o QR code (em base64) ao modelo para ser exibido
+        model.addAttribute("qrCodeBase64", locacao.getQrCode());
+        return "detalhesLocacao";
+    }
 }
