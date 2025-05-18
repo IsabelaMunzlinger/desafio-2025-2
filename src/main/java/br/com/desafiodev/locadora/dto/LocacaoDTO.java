@@ -1,12 +1,11 @@
 package br.com.desafiodev.locadora.dto;
 
-// Importações de validações e anotações
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.br.CPF;
+import org.hibernate.validator.constraints.br.CPF; //Para validar o cpf
 
 import java.time.LocalDate;
 import java.util.List;
