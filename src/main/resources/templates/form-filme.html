@@ -1,64 +1,70 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Adicionar Filme</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" /> <!-- Bootstrap CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script> <!-- Plugin jQuery Mask -->
 </head>
-<body>
+<body class="container mt-4">
 
-<h2>Adicionar Novo Filme</h2>
+<a th:href="@{/menu}" class="btn btn-secondary mb-4"> <!-- Botão para voltar ao menu principal -->
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2>Adicionar Novo Filme</h2> <!-- Cabeçalho -->
 
 <!-- Mensagem de erro -->
-<div th:if="${erro}" style="color: red; margin-top: 1em;">
+<div th:if="${erro}" class="alert alert-danger" role="alert">
     <strong th:text="${erro}"></strong>
 </div>
 
 <!-- Botão para buscar um filme aleatório -->
-<form th:action="@{/filmes/buscar}" method="get">
-    <button type="submit">Buscar Filme Aleatório</button>
+<form th:action="@{/filmes/buscar}" method="get" class="mb-3">
+    <button type="submit" class="btn btn-secondary">Buscar Filme Aleatório</button>
 </form>
 
 <!-- Formulário para salvar o filme -->
 <form th:action="@{/filmes/salvar}" th:object="${filme}" method="post">
+
     <!-- Campo oculto para o ID -->
     <input type="hidden" th:field="*{id}" />
 
-    <p>
+    <div class="form-group">
         <label for="titulo">Título:</label>
-        <!-- readonly para não poder alterar o campo -->
-        <input type="text" id="titulo" th:field="*{titulo}" readonly/>
-    </p>
+        <input type="text" id="titulo" th:field="*{titulo}" class="form-control" readonly /> <!-- Título do filme (readonly) -->
+    </div>
 
-    <p>
+    <div class="form-group">
         <label for="resumo">Resumo:</label>
-        <textarea id="resumo" th:field="*{resumo}" readonly></textarea>
-    </p>
+        <textarea id="resumo" th:field="*{resumo}" class="form-control" rows="4" readonly></textarea> <!-- Resumo do filme (readonly) -->
+    </div>
 
-    <p>
+    <div class="form-group">
         <label for="pontuacao">Pontuação:</label>
-        <input type="text" id="pontuacao" th:field="*{pontuacao}" readonly />
-    </p>
+        <input type="text" id="pontuacao" th:field="*{pontuacao}" class="form-control" readonly /> <!-- Pontuação (readonly) -->
+    </div>
 
-    <p>
+    <div class="form-group">
         <label for="lancamento">Lançamento:</label>
-        <input type="date" id="lancamento" th:field="*{lancamento}" readonly />
+        <input type="date" id="lancamento" th:field="*{lancamento}" class="form-control" readonly /> <!-- Data de lançamento (readonly) -->
+    </div>
 
-    </p>
+    <div class="form-group form-check">
+        <input type="checkbox" id="ativo" th:field="*{ativo}" class="form-check-input" /> <!-- Checkbox para marcar ativo -->
+        <label class="form-check-label" for="ativo">Ativo</label>
+    </div>
 
-    <p>
-        <label for="ativo">Ativo:</label>
-        <input type="checkbox" id="ativo" th:field="*{ativo}" />
-    </p>
-
-    <p>
-        <!-- Limita que seja selecionado menos que 1 ou mais que 10 -->
+    <div class="form-group">
         <label for="exemplaresDisponiveis">Exemplares disponíveis:</label>
         <input type="number" id="exemplaresDisponiveis"
                th:field="*{exemplaresDisponiveis}"
-               required min="1" max="10" />
-    </p>
+               class="form-control"
+               required min="1" /> <!-- Número de exemplares disponíveis -->
+    </div>
 
-    <button type="submit">Salvar</button>
+    <button type="submit" class="btn btn-primary">Salvar</button> <!-- Botão para salvar o filme -->
 </form>
 
 </body>
