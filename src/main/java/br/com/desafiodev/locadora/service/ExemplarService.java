@@ -30,37 +30,29 @@ public class ExemplarService {
         Filme filme = filmeRepository.findById(filmeId)
                 .orElseThrow(() -> new IllegalArgumentException("Filme não encontrado"));
 
-        // Contagem dos exemplares ativos do filme
-        long totalAtuais = exemplarRepository.countByFilme(filme);
-
         // Criação dos exemplares
         List<Exemplar> exemplares = new ArrayList<>();
         for (int i = 0; i < quantidade; i++) {
             Exemplar exemplar = new Exemplar();
             exemplar.setFilme(filme);
-            exemplar.setAtivo(ativo != null ? ativo : true); //Se ativo estiver marcado, parâmetro recebe true
+            exemplar.setAtivo(ativo != null ? ativo : true); // Se "ativo" estiver marcado, recebe true
             exemplar.setDataCadastro(new Date());
             exemplares.add(exemplar);
         }
 
-        // Atualiza a quantidade de exemplares disponíveis
-        filme.setExemplaresDisponiveis(totalAtuais + quantidade);
+        // Conta quantos exemplares estão sendo adicionados como ativos
+        long novosAtivos = exemplares.stream().filter(Exemplar::isAtivo).count();
+
+        // Atualiza a quantidade de exemplares disponíveis (somente os ativos)
+        Long disponiveis = filme.getExemplaresDisponiveis();
+        if (disponiveis == null) disponiveis = 0L;
+        filme.setExemplaresDisponiveis(disponiveis + novosAtivos);
 
         // Salva os exemplares e o filme
         exemplarRepository.saveAll(exemplares); // Salva os exemplares
-        filmeRepository.save(filme); // Atualiza o filme com a nova quantidade de exemplares
+        filmeRepository.save(filme);            // Atualiza o filme com nova quantidade
     }
 
-    // Lista os exemplares disponíveis para locação
-    public List<Exemplar> listarExemplaresDisponiveisParaLocacao() {
-        return exemplarRepository.buscarExemplaresDisponiveisParaLocacao();
-    }
-
-    // Busca exemplar por id
-    public Exemplar buscarPorId(Long id) {
-        return exemplarRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Exemplar não encontrado com ID: " + id));
-    }
 
 
     @Transactional
@@ -111,6 +103,37 @@ public class ExemplarService {
         exemplarRepository.save(exemplar);
     }
 
+    // Somente permite excluir um exemplar se ele não foi alugado nenhuma vez
+    @Transactional
+    public void excluirExemplar(Long exemplarId) {
+        Exemplar exemplar = exemplarRepository.findById(exemplarId)
+                .orElseThrow(() -> new IllegalArgumentException("Exemplar não encontrado"));
 
+        // Se o exemplar já foi alugado alguma vez, não permitir a exclusão
+        if (exemplar.getLocacoesExemplares() != null && !exemplar.getLocacoesExemplares().isEmpty()) {
+            throw new IllegalStateException("Não é possível excluir um exemplar que já foi alugado.");
+        }
+
+        Filme filme = exemplar.getFilme();
+
+        if (exemplar.isAtivo()) {
+            Long disponiveis = filme.getExemplaresDisponiveis();
+            filme.setExemplaresDisponiveis(Math.max(0, disponiveis - 1));
+            filmeRepository.save(filme);
+        }
+
+        exemplarRepository.delete(exemplar);
+    }
+
+    // Lista os exemplares disponíveis
+    public List<Exemplar> listarExemplaresDisponiveisParaLocacao() {
+        return exemplarRepository.buscarExemplaresDisponiveisParaLocacao();
+    }
+
+    // Busca o exemplar por id
+    public Exemplar buscarPorId(Long id) {
+        return exemplarRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Exemplar não encontrado com ID: " + id));
+    }
 
 }
