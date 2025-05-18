@@ -32,8 +32,9 @@ public class Locacao {
     @Temporal(TemporalType.DATE)
     private Date dataDevolvido;
 
-    // Getters e setters
-
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String qrCode;
 
     public Integer getId() {
         return id;
