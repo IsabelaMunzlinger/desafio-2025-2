@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Locações</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body class="container mt-4">
+
+<a th:href="@{/menu}" class="btn btn-secondary mb-4">
+    <!-- Botão para voltar ao menu principal -->
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu
+</a>
+
+<h2>Locações Registradas</h2> <!-- Título da página -->
+
+<!-- Formulário para filtrar locações -->
+<form method="get" th:action="@{/locacoes/listar}" class="form-inline mb-3">
+    <!-- Campo para filtrar por nome -->
+    <input type="text" name="nome" class="form-control mr-2" placeholder="Nome" th:value="${param.nome}" />
+
+    <!-- Campo para filtrar por CPF -->
+    <input type="text" name="cpf" class="form-control mr-2" placeholder="CPF" th:value="${param.cpf}" />
+
+    <!-- Campo para filtrar por e-mail -->
+    <input type="text" name="email" class="form-control mr-2" placeholder="E-mail" th:value="${param.email}" />
+
+    <!-- Seleção do status da locação -->
+    <select name="status" class="form-control mr-2">
+        <option value="">Todos</option> <!-- Exibe todas as locações -->
+        <option value="pendente" th:selected="${param.status == 'pendente'}">Pendentes</option>
+        <option value="devolvida" th:selected="${param.status == 'devolvida'}">Devolvidas</option>
+    </select>
+
+    <!-- Botão para aplicar o filtro -->
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<!-- Tabela com os dados das locações -->
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <!-- Cabeçalhos das colunas da tabela -->
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Data Locação</th>
+        <th>Data Devolução</th>
+        <th>Data Devolvido</th>
+        <th>Status</th>
+        <th>QR Code</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Loop para listar todas as locações -->
+    <tr th:each="locacao : ${locacoes}">
+        <!-- Exibição dos dados da locação -->
+        <td th:text="${locacao.nome}"></td>
+        <td th:text="${locacao.cpf}"></td>
+        <td th:text="${locacao.email}"></td>
+        <td th:text="${locacao.telefone}"></td>
+        <td th:text="${locacao.dataLocacaoFormatada}"></td>
+        <td th:text="${locacao.dataDevolucaoFormatada}"></td>
+
+        <!-- Exibe a data de devolução, se houver -->
+        <td th:text="${locacao.dataDevolvido != null} ? ${#dates.format(locacao.dataDevolvido, 'dd/MM/yyyy')} : '-'"></td>
+
+        <!-- Coluna de status: botão para devolver ou status devolvido -->
+        <td>
+            <!-- Se ainda não foi devolvido, mostra botão de devolução -->
+            <div th:if="${locacao.dataDevolvido == null}">
+                <form th:action="@{/locacoes/{id}/devolver(id=${locacao.id})}" method="post">
+                    <button type="submit" class="btn btn-warning btn-sm">Devolver</button>
+                </form>
+            </div>
+            <!-- Se já foi devolvido, mostra a mensagem de devolvido -->
+            <div th:unless="${locacao.dataDevolvido == null}">
+                <span class="badge badge-success">Devolvido</span>
+            </div>
+        </td>
+
+        <!-- Botão para visualizar o QR Code da locação -->
+        <td>
+            <a th:href="@{/locacoes/{id}/qrcode(id=${locacao.id})}" class="btn btn-sm btn-info">Ver QR Code</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Botão para registrar uma nova locação -->
+<a th:href="@{/locacoes/novo}" class="btn btn-success">Nova Locação</a>
+
+
+</body>
+</html>
